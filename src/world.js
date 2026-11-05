@@ -95,7 +95,7 @@ export function createWorld(host, options) {
   label('ES Atrium',0,10.8,3,6.5,atrium);
   // Curved glazing, repeated ribs, garden beds and water give the plaza depth.
   const glassRoof=new THREE.MeshPhysicalMaterial({color:'#c5d7b8',metalness:.15,roughness:.16,transparent:true,opacity:.16,side:THREE.DoubleSide,depthWrite:false});
-  let vault=mesh(new THREE.CylinderGeometry(10,10,11,64,1,true,0,Math.PI),glassRoof,0,1,-16.5);
+  let vault=mesh(new THREE.CylinderGeometry(10,10,11,64,1,true,Math.PI/2,Math.PI),glassRoof,0,1,-16.5);
   vault.rotation.x=Math.PI/2;
   for(let a=0;a<=Math.PI;a+=Math.PI/18){
     const x=Math.cos(a)*10,y=1+Math.sin(a)*10;
@@ -184,7 +184,7 @@ export function createWorld(host, options) {
     });tex.needsUpdate=true;
   }
   const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();let down=null,tween=null,current='plaza',reduced=false,walking=false;
-  function go(id){let d=destinations[id];if(!d)return;current=id;walking=false;controls.enabled=true;controls.enablePan=id!=='es';controls.enableRotate=id!=='es';controls.minDistance=id==='es'?8:3;controls.maxDistance=id==='es'?23:70;
+  function go(id){let d=destinations[id];if(!d)return;if(id==='es'){const distance=Math.max(15,8.9/(Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*camera.aspect));d={position:[0,5.2,-12.8+distance],target:[0,5.2,-12.8]};}current=id;walking=false;controls.enabled=true;controls.enablePan=id!=='es';controls.enableRotate=id!=='es';controls.minDistance=id==='es'?8:3;controls.maxDistance=id==='es'?Math.max(23,d.position[2]+12.8+5):70;
     tween={position:new THREE.Vector3(...d.position),target:new THREE.Vector3(...d.target)};
     if(reduced){camera.position.copy(tween.position);controls.target.copy(tween.target);tween=null}
     options.onDestination(id);
