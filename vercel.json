@@ -1,1 +1,1 @@
-{"framework":"vite","buildCommand":"npm run build","outputDirectory":"dist"}
+{"framework":"vite","buildCommand":"npm test && npm run build","outputDirectory":"dist"}
