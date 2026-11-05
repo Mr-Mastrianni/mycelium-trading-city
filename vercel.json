@@ -22,5 +22,8 @@
       "source": "/api/auth/:authPath*",
       "destination": "/api/auth-handler?__auth_path=:authPath*"
     }
+  ],
+  "regions": [
+    "iad1"
   ]
 }

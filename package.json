@@ -17,7 +17,7 @@
     "zod": "^4.6.7"
   },
   "engines": {
-    "node": ">=22"
+    "node": "24.x"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.15"
