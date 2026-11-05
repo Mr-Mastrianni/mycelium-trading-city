@@ -1,6 +1,13 @@
-# Mycelium Trading City — reconstructed foundation
-Run `npm install`, `npm run dev`; validate with `npm test` and `npm run build`. Deploy as a Vite project on Vercel with output `dist`.
+# Mycelium Trading City
 
-ES prices and event cards are synthetic. FVG detection is a basic engineering interpretation, not verified ICT methodology. Paper limit orders use a $5 illustrative round-trip fee, a two-contract maximum and $500 planned risk limit. Gaps through stops use the worse open; ambiguous bars stop first. Browser storage is local only.
+A navigable Three.js trading practice world with one categorized menu, ES CSV replay, long/short paper orders, a journal and optional cloud accounts.
 
-TradingAgents is not connected: target https://github.com/TauricResearch/TradingAgents (Apache-2.0), examined commit 9fa1196fffbcfd9de5146d2dd2869df84ab99838. Live market feeds, AI agents, brokerage execution, accounts, and backtesting are not implemented. No real trading.
+- `npm install`
+- `npm test`
+- `npm run build`
+
+Deployed with Vite on Vercel. ES history comes from your own one-minute CSV export; the default demo is clearly synthetic. No broker or live trading endpoint is connected.
+
+See [practice-release.md](docs/practice-release.md) for supported imports, execution assumptions, saving behavior and account activation. Cloud accounts require a dedicated Neon database, Better Auth server configuration, and the database migration; no credentials belong in this repository.
+
+Environment art credits and graphics verification limits are in [environment-art.md](docs/environment-art.md).

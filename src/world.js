@@ -43,16 +43,16 @@ export function createWorld(host, options) {
   const candles=new THREE.Group();chart.add(candles);
   hit.push({object:chart,id:'es'});
   const green=material('#b1d59a',.1,.45),red=material('#d39886',.1,.45);
-  function updateChart(bars,overlay,gapList,timeframe){
+  function updateChart(bars,overlay,gapList,timeframe,meta={}){
     while(candles.children.length){let m=candles.children[0];candles.remove(m);m.geometry.dispose()}
     const visible=bars.slice(-48),lo=Math.min(...visible.map(b=>b.low))-1,hi=Math.max(...visible.map(b=>b.high))+1;
-    ctx.fillStyle='#142621';ctx.fillRect(0,0,2048,1024);ctx.fillStyle='#e6e8d6';ctx.font='500 51px Georgia';ctx.fillText('ES  /  Synthetic replay',130,100);
+    ctx.fillStyle='#142621';ctx.fillRect(0,0,2048,1024);ctx.fillStyle='#e6e8d6';ctx.font='500 51px Georgia';ctx.fillText(meta.title||'ES / Replay',130,100);
     ctx.fillStyle='#9eaf9c';ctx.font='25px sans-serif';ctx.textAlign='right';ctx.fillText(timeframe+'m  ·  Closed candles',1900,100);ctx.textAlign='left';
     const left=170,right=1880,top=190,bottom=820;
     const py=v=>bottom-(v-lo)/(hi-lo)*(bottom-top);
     for(let i=0;i<=4;i++){let v=lo+(hi-lo)*i/4,y=py(v);ctx.strokeStyle='#3a5145';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();ctx.fillStyle='#b4c4b1';ctx.font='23px monospace';ctx.fillText(v.toFixed(2),15,y+8)}
     for(let i=0;i<visible.length;i+=12){let d=new Date(visible[i].time),x=left+i*(right-left)/visible.length;ctx.fillStyle='#9cae9b';ctx.font='23px monospace';ctx.fillText(d.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit'}),x,890)}
-    ctx.fillStyle='#8ba28d';ctx.font='21px sans-serif';ctx.fillText('PRACTICE DATA  ·  NO LIVE ORDERS',left,970);
+    ctx.fillStyle='#8ba28d';ctx.font='21px sans-serif';ctx.fillText((meta.source||'PRACTICE DATA')+'  ·  NO LIVE ORDERS',left,970);
     if(overlay){
       const offset=bars.length-visible.length;
       gapList.filter(g=>g.index>=offset).slice(-2).forEach(g=>{const x=left+(g.index-offset)*(right-left)/visible.length;

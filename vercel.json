@@ -1,1 +1,20 @@
-{"framework":"vite","buildCommand":"npm test && npm run build","outputDirectory":"dist"}
+{
+  "framework": "vite",
+  "buildCommand": "npm test && npm run build",
+  "outputDirectory": "dist",
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    }
+  ]
+}

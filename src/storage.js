@@ -1,0 +1,7 @@
+let database;
+export async function db(){if(database)return database;database=await new Promise((resolve,reject)=>{const r=indexedDB.open('mycelium-practice',1);r.onupgradeneeded=()=>r.result.createObjectStore('sessions');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});return database}
+export async function readLocal(key){const d=await db();return new Promise((resolve,reject)=>{const r=d.transaction('sessions').objectStore('sessions').get(key);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error)})}
+export async function writeLocal(key,value){const d=await db();return new Promise((resolve,reject)=>{const t=d.transaction('sessions','readwrite');t.objectStore('sessions').put(value,key);t.oncomplete=resolve;t.onerror=()=>reject(t.error);t.onabort=()=>reject(t.error||new Error('Saving failed'))})}
+export async function archiveLocal(value,owner='guest'){return writeLocal('backup:'+owner+':'+Date.now()+':'+crypto.randomUUID(),value)}
+
+export async function listBackups(owner){const d=await db();return new Promise((resolve,reject)=>{const rows=[],r=d.transaction('sessions').objectStore('sessions').openCursor();r.onsuccess=()=>{const c=r.result;if(!c){resolve(rows.sort((a,b)=>b.savedAt.localeCompare(a.savedAt)).slice(0,30));return}if(String(c.key).startsWith('backup:'+owner+':')&&c.value?.dataset)rows.push({key:c.key,savedAt:c.value.updatedAt,contract:c.value.dataset.contract,count:c.value.dataset.bars.length});c.continue()};r.onerror=()=>reject(r.error)})}
