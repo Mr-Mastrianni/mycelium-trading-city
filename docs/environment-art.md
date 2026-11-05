@@ -27,3 +27,8 @@ or offline concept-render fidelity. Current release checks cover the Vite bundle
 existing paper engine tests. A browser/device visual and performance review is still
 needed, especially on Android. No live market feed, broker, or AI research backend
 was introduced by this visual pass.
+
+CPU geometry smoke check (Three.js r181): scene construction produced 25,060 leaf
+instances and 8 bots, with finite vertex positions and no geometry merge warnings.
+This check substitutes the canvas and environment-map generator; it does not exercise
+WebGL shader compilation, browser textures, navigation input, or device frame rates.

@@ -30,8 +30,8 @@ export function createWorld(host, options) {
     es:{position:[0,5.2,2],target:[0,5.2,-13]},
     events:{position:[-7,4.2,9],target:[-19,2.9,-7]},
     research:{position:[7,4.2,9],target:[19,2.9,-7]},
-    journal:{position:[5,4.2,30],target:[17,2.8,16]},
-    practice:{position:[-6,4.2,29],target:[-18,2.8,15]}
+    journal:{position:[4,4.2,11.4],target:[17,2.8,16]},
+    practice:{position:[-5,4.2,11.4],target:[-18,2.8,15]}
   };
   const chart=new THREE.Group();chart.position.set(0,5.1,-12.8);scene.add(chart);
   box(16.6,8.3,.24,dark,0,0,0,chart);
