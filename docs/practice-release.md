@@ -30,13 +30,15 @@ Guest data uses IndexedDB. Local accounts are separated by authenticated user ID
 
 Accounts use Better Auth email/password, HTTP-only session cookies, database-backed rate limiting, authenticated user-scoped queries and optimistic save revisions. A conflicting device save is rejected with 409; the user explicitly chooses cloud vs device state. Offline changes remain local. No client-supplied user ID determines database ownership. JSON backups are validated and capped before cloud storage.
 
-Cloud saving is **not activated** until a dedicated database and auth configuration are connected and migrated. The health endpoint reports false and the UI shows setup pending rather than offering simulated accounts. Guest practice works independently.
+Cloud saving activates after the dedicated production database and private auth configuration are connected and migrated. The health endpoint reports readiness; the UI keeps sign-in hidden when setup is incomplete. Guest practice works independently.
+
+The production database is `mycelium-practice` (Neon Free, iad1), connected only to Mycelium production. Its credentials are sensitive server-only variables. Production builds serialize idempotent schema initialization over an unpooled database connection before publishing, and retain the prior deployment if initialization fails. Tests remove deployment credentials from their own process and use an isolated ephemeral Postgres instance.
 
 ### Activation steps
 
 1. In this existing Vercel project, connect a **new dedicated Neon Postgres database**, preferably iad1, on the already installed free Neon plan. Do not connect a database belonging to another application.
 2. Set server-only DATABASE_URL, BETTER_AUTH_SECRET (32+ random characters) and BETTER_AUTH_URL=https://mycelium-trading-city.vercel.app. Never expose these through VITE_ variables or commit them.
-3. Pull configuration securely and run `npm run db:migrate` against that dedicated database. It creates Better Auth tables and practice_snapshots, whose user_id references the auth user table. Do not run migrations against unrelated databases.
+3. Set the dedicated DATABASE_URL_UNPOOLED variable as well. Production builds run the migration automatically; operators can also pull configuration securely and run `npm run db:migrate` against that dedicated database. It creates Better Auth tables and practice_snapshots, whose user_id references the auth user table. Do not run migrations against unrelated databases.
 4. Redeploy and verify /api/health returns accountsReady:true.
 5. Verify real sign-up → sign-in → save → second-device load → concurrent-save conflict → sign-out isolation. Database-backed logic has integration tests against ephemeral Postgres (PGlite), but the deployed Neon connection still requires this verification.
 6. Email verification/password recovery delivery remains a follow-up integration; this initial email/password account implementation has no recovery-email service. Keep the deployment in personal beta until recovery is provided.

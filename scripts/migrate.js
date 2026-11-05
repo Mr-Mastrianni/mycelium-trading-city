@@ -1,6 +1,9 @@
-import {getMigrations}from'better-auth/db/migration';
-import {authOptions,getPool,isConfigured}from'../server/auth.js';
-if(!isConfigured())throw new Error('Connect the project database and set BETTER_AUTH_URL and BETTER_AUTH_SECRET before running db:migrate.');
-const {runMigrations}=await getMigrations(authOptions(getPool(),{url:process.env.BETTER_AUTH_URL,secret:process.env.BETTER_AUTH_SECRET,production:process.env.NODE_ENV==='production'}));await runMigrations();
-await getPool().query('CREATE TABLE IF NOT EXISTS practice_snapshots (user_id text PRIMARY KEY REFERENCES "user"(id) ON DELETE CASCADE, revision integer NOT NULL CHECK (revision>0), payload jsonb NOT NULL, updated_at timestamptz NOT NULL DEFAULT now())');
-console.log('Authentication and practice tables are ready.');await getPool().end();
+import {pathToFileURL}from'node:url';
+import pg from'pg';
+import {migrateDatabase}from'../server/migrations.js';
+export async function migrate(){
+ if(!process.env.DATABASE_URL_UNPOOLED||!process.env.BETTER_AUTH_SECRET||!process.env.BETTER_AUTH_URL)throw new Error('Dedicated unpooled database URL and auth configuration are required before migrating.');
+ const pool=new pg.Pool({connectionString:process.env.DATABASE_URL_UNPOOLED,max:3,idleTimeoutMillis:10000,connectionTimeoutMillis:10000});
+ try{await migrateDatabase(pool,{url:process.env.BETTER_AUTH_URL,secret:process.env.BETTER_AUTH_SECRET,production:process.env.NODE_ENV==='production'})}finally{await pool.end()}
+}
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){await migrate();console.log('Authentication and practice tables are ready.')}
